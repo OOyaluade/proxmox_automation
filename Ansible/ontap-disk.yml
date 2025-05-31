@@ -13,10 +13,3 @@
         state: absent
 
 
-
-- steps
- "sudo tar -xvf vsim-netapp-DOT9.10.1-cm_nodar.ova"
- qm disk import 500 vsim-NetAppDOT-simulate-disk1.vmdk local-lvm -format qcow2
- qm disk import 500 vsim-NetAppDOT-simulate-disk2.vmdk local-lvm -format qcow2 
- qm disk import 500 vsim-NetAppDOT-simulate-disk3.vmdk local-lvm -format qcow2
- qm disk import 500 vsim-NetAppDOT-simulate-disk4.vmdk local-lvm -format qcow2
