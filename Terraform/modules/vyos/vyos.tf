@@ -1,5 +1,6 @@
 # vyos.tf
 
+
 resource "proxmox_vm_qemu" "vyos" {
   name        = "vyos-router"
   target_node = "pve1"             # Change to your Proxmox node name
