@@ -1,0 +1,7 @@
+[dami]
+dami ansible_host=10.1.10.60
+
+[dami:vars]
+ansible_user=dami
+ansible_ssh_pass=2723damyXX.
+ansible_become_pass=2723damyXX.
