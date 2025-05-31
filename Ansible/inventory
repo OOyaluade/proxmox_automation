@@ -1,7 +1,2 @@
-[dami]
-dami ansible_host=10.1.10.60
-
-[dami:vars]
-ansible_user=dami
-ansible_ssh_pass=2723damyXX.
-ansible_become_pass=2723damyXX.
+[proxmox]
+pve1 ansible_host=10.1.10.31 ansible_user=root ansible_ssh_pass=2723damyXX. ansible_become_pass=2723damyXX.

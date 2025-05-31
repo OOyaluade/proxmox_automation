@@ -8,15 +8,6 @@ terraform {
 }
 
 
-variable "pm_api_token_secret" {
-  type = string
-
-}
-
-variable "pm_api_token_id" {
-  type = string
-
-}
 
 provider "proxmox" {
   pm_api_url          = "https://10.1.10.31:8006/api2/json"
