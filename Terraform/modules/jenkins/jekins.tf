@@ -35,7 +35,8 @@ resource "null_resource" "PermitRootLogin" {
       "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c 'apt-get update && apt-get install -y openssh-server sudo apt-transport-https ca-certificates curl software-properties-common'",
 
       "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config || echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl restart ssh"
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl restart ssh",
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword",
     ]
 
     connection {
@@ -45,15 +46,19 @@ resource "null_resource" "PermitRootLogin" {
       password    = var.proxmox_resource_pass
     }
   }
-  depends_on = [proxmox_lxc.jenkins]
+  depends_on = [null_resource.bootstrap_jenkins]
 }
 
 resource "null_resource" "bootstrap_jenkins" {
   provisioner "remote-exec" {
     inline = [
 
-      "pct exec ${proxmox_lxc.jenkins.vmid} -- apt-get update",
-      "pct exec ${proxmox_lxc.jenkins.vmid} -- apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common",
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c 'curl \"0.0.0.0\"'", 
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c 'apt -y update'",
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c 'apt install -y openssh-server'", 
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl enable --now sshd",
+      "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl restart sshd",
       "pct exec ${proxmox_lxc.jenkins.vmid} -- apt-get install -y docker.io",
       "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl enable docker",
       "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl start docker",
@@ -73,5 +78,5 @@ resource "null_resource" "bootstrap_jenkins" {
       password    = var.proxmox_resource_pass
     }
   }
-  depends_on = [null_resource.PermitRootLogin]
+  depends_on = [proxmox_lxc.jenkins]
 }

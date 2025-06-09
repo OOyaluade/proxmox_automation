@@ -84,25 +84,7 @@ module "vyos_router" {
 #   }
 # }
 
-# module "centos" {
-#     for_each = tomap({
-#     LINUXAPVE2 = {
-#       target_node = "pve2"  
-#     } 
-#     LINUXBPVE2 = {
-#       target_node = "pve2"
-#     } 
-#   })
 
-#   target_node = each.value.target_node
-#   name = each.key
-#   source = "./modules/centos"
-#   providers = {
-#     proxmox = proxmox
-#   }
-
-#   proxmox_resource_pass = var.proxmox_resource_pass
-#   }
 ####################################################################3
 
 module "jenkins" {
@@ -115,7 +97,7 @@ module "jenkins" {
   proxmox_resource_pass = var.proxmox_resource_pass
   providers = {
     proxmox = proxmox
-  }
+  } 
   }
 
 
@@ -130,7 +112,6 @@ host = "10.1.10.33"
   providers = {
     proxmox = proxmox
   }
-
   proxmox_resource_pass = var.proxmox_resource_pass
   }
 
@@ -143,10 +124,9 @@ host = "10.1.10.31"
   start = true
   target_node = "pve1"
   name = "CentOS-REDHat"
-  source = "./modules/cent-os"
+  source = "./modules/centos"
   providers = {
     proxmox = proxmox
   }
-
   proxmox_resource_pass = var.proxmox_resource_pass
   }

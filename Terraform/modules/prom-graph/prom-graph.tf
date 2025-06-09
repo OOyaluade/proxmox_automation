@@ -58,12 +58,14 @@ resource "null_resource" "PermitRootLogin" {
 resource "null_resource" "bootstrap_promgraph" {
   provisioner "remote-exec" {
     inline = [
-      "pct exec ${proxmox_lxc.prom-graph.vmid} -- bash -c 'echo nameserver 8.8.8.8 > /etc/resolv.conf'",
-      # Make sure the base tools are there (add curl, gnupg if missing)
-      "pct exec ${proxmox_lxc.prom-graph.vmid} -- apt-get update",
-      "pct exec ${proxmox_lxc.prom-graph.vmid} -- apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common",
 
-      # Use Ubuntu's docker.io instead of docker-ce for 24.04
+      "pct exec ${proxmox_lxc.prom-graph.vmid} -- bash -c 'curl \"0.0.0.0\"'", 
+      "pct exec ${proxmox_lxc.prom-graph.vmid} -- bash -c 'apt -y update'",
+      "pct exec ${proxmox_lxc.prom-graph.vmid} -- bash -c 'apt install -y openssh-server'", 
+      "pct exec ${proxmox_lxc.prom-graph.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.prom-graph.vmid} -- systemctl enable --now sshd",
+      "pct exec ${proxmox_lxc.prom-graph.vmid} -- systemctl restart ssh",
+      "pct exec ${proxmox_lxc.prom-graph.vmid} -- apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common",
       "pct exec ${proxmox_lxc.prom-graph.vmid} -- apt-get install -y docker.io",
 
       "pct exec ${proxmox_lxc.prom-graph.vmid} -- systemctl enable docker",

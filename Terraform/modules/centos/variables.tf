@@ -11,3 +11,15 @@ variable "name" {
 
 }
 
+variable "start" {
+  type = string
+  
+}
+
+variable "host" {
+type = string  
+}
+variable "public_ssh_key" {
+  type = string
+  
+}
