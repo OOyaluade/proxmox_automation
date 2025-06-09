@@ -3,7 +3,7 @@ variable "proxmox_resource_pass" {
 
 }
 variable "target_node" {
-type = string  
+  type = string
 }
 
 variable "name" {
@@ -13,13 +13,13 @@ variable "name" {
 
 variable "start" {
   type = string
-  
+
 }
 
 variable "host" {
-type = string  
+  type = string
 }
 variable "public_ssh_key" {
   type = string
-  
+
 }

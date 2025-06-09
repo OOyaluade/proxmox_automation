@@ -5,12 +5,12 @@ resource "proxmox_vm_qemu" "NODE1A" {
   os_type     = "ubuntu"
   scsihw      = "lsi53c810"
   boot        = "order=ide0"
-  tags = "StorageDevice"
+  tags        = "StorageDevice"
 
-    serial {
-  id     = 0
-  type   = "socket"
-}
+  serial {
+    id   = 0
+    type = "socket"
+  }
 
   disks {
     ide {
@@ -74,7 +74,7 @@ resource "null_resource" "import_netapp_disks" {
     type     = "ssh"
     user     = "root"
     host     = var.host # Proxmox host IP
-    password = "${var.proxmox_resource_pass}"
+    password = var.proxmox_resource_pass
   }
 
   provisioner "remote-exec" {

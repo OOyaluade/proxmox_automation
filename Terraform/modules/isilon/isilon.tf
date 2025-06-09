@@ -6,7 +6,7 @@
 #   vm_state    = "stopped"
 #   scsihw      = "virtio-scsi-pci"
 #   boot = "order=ide0;scsi0"
-  
+
 
 #   cpu {
 #     cores = 2

@@ -2,19 +2,19 @@ module "vyos_router" {
   for_each = tomap({
     VYOSPVE1 = {
       target_node = "pve1"
-      vm_state = "stopped"
+      vm_state    = "stopped"
     }
     VYOSPVE2 = {
       target_node = "pve2"
-      vm_state = "stopped"
+      vm_state    = "stopped"
     }
     VYOSPVE3 = {
       target_node = "pve3"
-      vm_state = "stopped"
+      vm_state    = "stopped"
 
   } })
 
-  vm_state = each.value.vm_state
+  vm_state    = each.value.vm_state
   name        = each.key
   target_node = each.value.target_node
 
@@ -88,45 +88,45 @@ module "vyos_router" {
 ####################################################################3
 
 module "jenkins" {
-  source = "./modules/jenkins"
-  host = "10.1.10.33"
-  start = true
-  target_node = "pve3"
-  name = "Jenkins"
-  public_ssh_key = var.public_ssh_key
+  source                = "./modules/jenkins"
+  host                  = "10.1.10.33"
+  start                 = true
+  target_node           = "pve3"
+  name                  = "Jenkins"
+  public_ssh_key        = var.public_ssh_key
   proxmox_resource_pass = var.proxmox_resource_pass
   providers = {
     proxmox = proxmox
-  } 
   }
+}
 
 
 module "prometheus_graphana" {
 
-public_ssh_key = var.public_ssh_key
-host = "10.1.10.33"
-  start = true
-  target_node = "pve3"
-  name = "PromGraph"
-  source = "./modules/prom-graph"
+  public_ssh_key = var.public_ssh_key
+  host           = "10.1.10.33"
+  start          = true
+  target_node    = "pve3"
+  name           = "PromGraph"
+  source         = "./modules/prom-graph"
   providers = {
     proxmox = proxmox
   }
   proxmox_resource_pass = var.proxmox_resource_pass
-  }
+}
 
 
 
 module "centos" {
 
   public_ssh_key = var.public_ssh_key
-host = "10.1.10.31"
-  start = true
-  target_node = "pve1"
-  name = "CentOS-REDHat"
-  source = "./modules/centos"
+  host           = "10.1.10.31"
+  start          = true
+  target_node    = "pve1"
+  name           = "CentOS-REDHat"
+  source         = "./modules/centos"
   providers = {
     proxmox = proxmox
   }
   proxmox_resource_pass = var.proxmox_resource_pass
-  }
+}

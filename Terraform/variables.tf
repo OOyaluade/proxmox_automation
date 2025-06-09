@@ -18,6 +18,6 @@ variable "proxmox_resource_pass" {
 
 variable "public_ssh_key" {
   type = string
-  
+
 }
 
