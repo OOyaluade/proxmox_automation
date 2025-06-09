@@ -8,23 +8,19 @@ resource "proxmox_lxc" "jenkins" {
   tags            = "ComputeUserL"
   ssh_public_keys = var.public_ssh_key
   onboot          = true
-
   cores  = 2
   memory = 2048
   swap   = 512
-
   rootfs {
     storage = "LVM-THIN"
     size    = "8G"
   }
-
   network {
     name   = "eth0"
     bridge = "vmbr0"
     ip     = "10.1.10.10/24"
     gw     = "10.1.10.1"
   }
-
   features {
     nesting = true
   }
@@ -46,13 +42,10 @@ resource "null_resource" "bootstrap_jenkins" {
       "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl enable docker",
       "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl start docker",
       "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c 'mkdir -p /var/jenkins_home && chown 1000:1000 /var/jenkins_home'",
-
       "pct exec ${proxmox_lxc.jenkins.vmid} -- docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v /var/jenkins_home:/var/jenkins_home jenkins/jenkins:lts",
       "pct exec ${proxmox_lxc.jenkins.vmid} -- docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword",
-
       "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c \"docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v /var/jenkins_home:/var/jenkins_home jenkins/jenkins:lts\"",
       "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c 'for i in {1..30}; do if docker exec jenkins test -f /var/jenkins_home/secrets/initialAdminPassword; then docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword; exit 0; fi; sleep 2; done; echo \"Jenkins admin password file not found!\"; exit 1'"
-
     ]
     connection {
       type     = "ssh"
