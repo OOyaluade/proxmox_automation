@@ -32,27 +32,6 @@ resource "proxmox_lxc" "prom-graph" {
 
 }
 
-resource "null_resource" "PermitRootLogin" {
-  provisioner "remote-exec" {
-    inline = [
-      # 1. Install SSH, Docker prerequisites
-      "pct exec ${proxmox_lxc.prom-graph.vmid} -- bash -c 'apt-get update && apt-get install -y openssh-server sudo apt-transport-https ca-certificates curl software-properties-common'",
-
-      # 2. Set PermitRootLogin yes in sshd_config
-      "pct exec ${proxmox_lxc.prom-graph.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config || echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.prom-graph.vmid} -- systemctl restart ssh",
-
-    ]
-
-    connection {
-      type        = "ssh"
-      user        = "root"
-      host        = var.host
-      password = var.proxmox_resource_pass
-    }
-  }
-  depends_on = [proxmox_lxc.prom-graph]
-}
 
 
 resource "null_resource" "bootstrap_promgraph" {
@@ -81,5 +60,5 @@ resource "null_resource" "bootstrap_promgraph" {
       password    = var.proxmox_resource_pass
     }
   }
-  depends_on = [null_resource.PermitRootLogin]
+
 }

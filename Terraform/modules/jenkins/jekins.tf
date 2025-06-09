@@ -29,25 +29,7 @@ resource "proxmox_lxc" "jenkins" {
   }
 }
 
-resource "null_resource" "PermitRootLogin" {
-  provisioner "remote-exec" {
-    inline = [
-      "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c 'apt-get update && apt-get install -y openssh-server sudo apt-transport-https ca-certificates curl software-properties-common'",
 
-      "pct exec ${proxmox_lxc.jenkins.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config || echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.jenkins.vmid} -- systemctl restart ssh",
-      "pct exec ${proxmox_lxc.jenkins.vmid} -- docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword",
-    ]
-
-    connection {
-      type        = "ssh"
-      user        = "root"
-      host        = var.host        # Proxmox host IP
-      password    = var.proxmox_resource_pass
-    }
-  }
-  depends_on = [null_resource.bootstrap_jenkins]
-}
 
 resource "null_resource" "bootstrap_jenkins" {
   provisioner "remote-exec" {
@@ -78,5 +60,5 @@ resource "null_resource" "bootstrap_jenkins" {
       password    = var.proxmox_resource_pass
     }
   }
-  depends_on = [proxmox_lxc.jenkins]
+
 }
