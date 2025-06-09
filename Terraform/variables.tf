@@ -8,7 +8,16 @@ variable "pm_api_token_id" {
 
 }
 
+
+
+
 variable "proxmox_resource_pass" {
   type = string
 
 }
+
+variable "public_ssh_key" {
+  type = string
+  
+}
+

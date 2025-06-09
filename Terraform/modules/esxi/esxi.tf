@@ -1,7 +1,7 @@
-resource "proxmox_vm_qemu" "vcsa" {
-  name        = "vcsa"
+resource "proxmox_vm_qemu" "esxi" {
+  name        = "esxi"
   target_node = "pve1"
-  vmid        = 201
+
   os_type     = "other"
   memory      = 16384
   scsihw      = "virtio-scsi-pci"
@@ -9,6 +9,7 @@ resource "proxmox_vm_qemu" "vcsa" {
   boot        = "order=ide0"
   hotplug     = ""
   vm_state    = "stopped"
+  tags = "Hypervisor"
 
   disks {
 
@@ -33,14 +34,14 @@ resource "proxmox_vm_qemu" "vcsa" {
 
   network {
     id       = 0
-    bridge   = "vmbr1"
+    bridge   = "vmbr0"
     model    = "vmxnet3"
     firewall = false
   }
 
   network {
     id       = 1
-    bridge   = "vmbr1"
+    bridge   = "vmbr0"
     model    = "vmxnet3"
     firewall = false
   }

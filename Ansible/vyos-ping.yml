@@ -1,0 +1,7 @@
+- name: Test VyOS reachability
+  hosts: vyos
+  gather_facts: false
+  tasks:
+    - name: Ping device from VyOS router
+      vyos.vyos.vyos_ping:
+        dest: 10.1.10.62

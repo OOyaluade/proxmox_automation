@@ -1,10 +1,16 @@
 resource "proxmox_vm_qemu" "NODE1A" {
-  name        = "NODE1A"
-  target_node = "pve1"
+  name        = var.name
+  target_node = var.target_node
   vm_state    = "stopped"
   os_type     = "ubuntu"
   scsihw      = "lsi53c810"
   boot        = "order=ide0"
+  tags = "StorageDevice"
+
+    serial {
+  id     = 0
+  type   = "socket"
+}
 
   disks {
     ide {
@@ -67,14 +73,15 @@ resource "null_resource" "import_netapp_disks" {
   connection {
     type     = "ssh"
     user     = "root"
-    host     = "10.1.10.31" # Proxmox host IP
-    password = var.proxmox_resource_pass
+    host     = var.host # Proxmox host IP
+    password = "${var.proxmox_resource_pass}"
   }
 
   provisioner "remote-exec" {
     inline = [
       "cd /var/lib/vz/template/cache/",
       "tar -xvf /var/lib/vz/template/cache/vsim-netapp-DOT9.15.1-cm_nodar.ova",
+      # "echo $HOSTNAME"
 
       "qm disk import ${proxmox_vm_qemu.NODE1A.vmid} vsim-NetAppDOT-simulate-disk1.vmdk LVM-THIN -format qcow2",
       "qm disk import ${proxmox_vm_qemu.NODE1A.vmid} vsim-NetAppDOT-simulate-disk2.vmdk LVM-THIN -format qcow2",
