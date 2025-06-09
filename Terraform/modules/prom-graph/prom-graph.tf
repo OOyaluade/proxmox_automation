@@ -7,6 +7,7 @@ resource "proxmox_lxc" "prom-graph" {
     start = var.start
     tags = "ComputeUserL"
     ssh_public_keys = var.public_ssh_key
+    onboot = true
 
 
   cores  = 2

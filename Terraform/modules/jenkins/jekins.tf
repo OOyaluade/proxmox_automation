@@ -7,6 +7,7 @@ resource "proxmox_lxc" "jenkins" {
   start       = var.start
   tags        = "ComputeUserL"
   ssh_public_keys = var.public_ssh_key
+  onboot = true
 
   cores  = 2
   memory = 2048

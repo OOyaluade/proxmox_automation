@@ -7,6 +7,7 @@ resource "proxmox_lxc" "centos" {
     start = var.start
     tags = "ComputeUserL"
     ssh_public_keys = var.public_ssh_key
+    onboot = true
 
 
   cores  = 4
@@ -45,11 +46,8 @@ resource "null_resource" "PermitRootLogin" {
       "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf -y update'",
       "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf install -y openssh-server'", 
       "pct exec ${proxmox_lxc.centos.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
-
-      # 3. Enable and restart SSHD
       "pct exec ${proxmox_lxc.centos.vmid} -- systemctl enable --now sshd",
       "pct exec ${proxmox_lxc.centos.vmid} -- systemctl restart sshd",
-      "pwd"
     ]
 
     connection {
