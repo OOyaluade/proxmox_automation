@@ -1,5 +1,5 @@
 variable "target_node" {
-type = string  
+  type = string
 }
 
 variable "name" {

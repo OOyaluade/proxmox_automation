@@ -2,13 +2,13 @@ resource "proxmox_vm_qemu" "win11" {
   name        = "win11"
   target_node = "pve2"
 
-  os_type     = "win11"
-  memory      = 8192            # 8 GB RAM
-  scsihw      = "virtio-scsi-pci"
-  onboot      = true
-  boot        = "order=ide0"
-    vm_state    = "stopped"
-    tags = "ComputeUserW"
+  os_type  = "win11"
+  memory   = 8192 # 8 GB RAM
+  scsihw   = "virtio-scsi-pci"
+  onboot   = true
+  boot     = "order=ide0"
+  vm_state = "stopped"
+  tags     = "ComputeUserW"
 
 
   disks {
@@ -34,10 +34,10 @@ resource "proxmox_vm_qemu" "win11" {
   }
 
   network {
-    id        = 0
-    bridge    = "vmbr0"
-    model     = "virtio"
-    firewall  = false
+    id       = 0
+    bridge   = "vmbr0"
+    model    = "virtio"
+    firewall = false
   }
 
   cpu {

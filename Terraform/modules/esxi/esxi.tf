@@ -2,14 +2,14 @@ resource "proxmox_vm_qemu" "esxi" {
   name        = "esxi"
   target_node = "pve1"
 
-  os_type     = "other"
-  memory      = 16384
-  scsihw      = "virtio-scsi-pci"
-  onboot      = true
-  boot        = "order=ide0"
-  hotplug     = ""
-  vm_state    = "stopped"
-  tags = "Hypervisor"
+  os_type  = "other"
+  memory   = 16384
+  scsihw   = "virtio-scsi-pci"
+  onboot   = true
+  boot     = "order=ide0"
+  hotplug  = ""
+  vm_state = "stopped"
+  tags     = "Hypervisor"
 
   disks {
 

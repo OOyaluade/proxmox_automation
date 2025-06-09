@@ -3,19 +3,19 @@
 
 resource "proxmox_vm_qemu" "vyos" {
   name        = var.name
-  target_node = var.target_node             # Change to your Proxmox node name
-  os_type     = "l26"              # Generic Linux 2.6/3.x/4.x/5.x (VyOS runs on Linux)
+  target_node = var.target_node # Change to your Proxmox node name
+  os_type     = "l26"           # Generic Linux 2.6/3.x/4.x/5.x (VyOS runs on Linux)
   memory      = 1024
   scsihw      = "virtio-scsi-pci"
   onboot      = true
   boot        = "order=ide1;ide0"
   agent       = 0
   vm_state    = var.vm_state
-  tags = "router"
+  tags        = "router"
   serial {
-  id     = 0
-  type   = "socket"
-}
+    id   = 0
+    type = "socket"
+  }
   disks {
     ide {
       ide0 {
@@ -23,7 +23,7 @@ resource "proxmox_vm_qemu" "vyos" {
           iso = "local:iso/vyos.iso"
         }
       }
-       ide1 {
+      ide1 {
         disk {
           size    = "2G"
           storage = "LVM-THIN"
@@ -40,10 +40,10 @@ resource "proxmox_vm_qemu" "vyos" {
     firewall  = false
     link_down = false
     model     = "e1000"
-    tag = 0
+    tag       = 0
 
   }
-    network {
+  network {
     id        = 1
     bridge    = "vmbr0"
     firewall  = false
@@ -131,7 +131,7 @@ resource "proxmox_vm_qemu" "vyos" {
     model     = "e1000"
 
   }
-    network {
+  network {
     id        = 12
     bridge    = "vmbr0"
     firewall  = false
@@ -139,7 +139,7 @@ resource "proxmox_vm_qemu" "vyos" {
     model     = "e1000"
 
   }
-    network {
+  network {
     id        = 13
     bridge    = "vmbr0"
     firewall  = false
@@ -147,7 +147,7 @@ resource "proxmox_vm_qemu" "vyos" {
     model     = "e1000"
 
   }
-# lifecycle {
-#   prevent_destroy = true
-# }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }

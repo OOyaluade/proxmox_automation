@@ -1,5 +1,5 @@
 variable "target_node" {
-type = string  
+  type = string
 }
 
 variable "name" {
@@ -8,7 +8,7 @@ variable "name" {
 }
 
 variable "vm_state" {
- 
+
   type = string
 
 }

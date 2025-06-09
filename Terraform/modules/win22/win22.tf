@@ -2,13 +2,13 @@ resource "proxmox_vm_qemu" "win22" {
   name        = var.name
   target_node = var.target_node
 
-  os_type     = "win10" # "win10" is fine for Server 2016/2019/2022
-  memory      = 8192
-  scsihw      = "virtio-scsi-pci"
-  onboot      = true
-  boot        = "order=ide0"
-  vm_state    = "stopped"
-  tags = "ComputeServer"
+  os_type  = "win10" # "win10" is fine for Server 2016/2019/2022
+  memory   = 8192
+  scsihw   = "virtio-scsi-pci"
+  onboot   = true
+  boot     = "order=ide0"
+  vm_state = "stopped"
+  tags     = "ComputeServer"
 
   disks {
     ide {
