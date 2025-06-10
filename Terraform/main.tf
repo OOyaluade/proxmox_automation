@@ -87,9 +87,9 @@ module "vyos_router" {
 
 ####################################################################3
 module "testos16" {
-  source                = "./modules/jenkins"
+  source                = "./modules/testos"
   host                  = "10.1.10.33"
-  ip = "10.1.10.16/24"
+  ip = var.testos16_ip
   start                 = true
   target_node           = "pve3"
   name                  = "testos16"
@@ -100,9 +100,9 @@ module "testos16" {
   }
 }
 module "testos15" {
-  source                = "./modules/jenkins"
+  source                = "./modules/testos"
   host                  = "10.1.10.33"
-  ip = "10.1.10.15/24"
+  ip = var.testos15_ip
   start                 = true
   target_node           = "pve3"
   name                  = "testos15"
@@ -116,7 +116,7 @@ module "testos15" {
 module "jenkins" {
   source                = "./modules/jenkins"
   host                  = "10.1.10.33"
-  ip = "10.1.10.14/24"
+  ip = var.jenkins_ip
   start                 = true
   target_node           = "pve3"
   name                  = "Jenkins14"
@@ -132,7 +132,7 @@ module "graf" {
 
   public_ssh_key = var.public_ssh_key
   host           = "10.1.10.33"
-  ip = "10.1.10.13/24"
+  ip = var.graf_ip
   start          = true
   target_node    = "pve3"
   name           = "Graf13"
@@ -148,7 +148,7 @@ module "prom" {
 
   public_ssh_key = var.public_ssh_key
   host           = "10.1.10.33"
-    ip = "10.1.10.12/24"
+  ip = var.prom_ip
   start          = true
   target_node    = "pve3"
   name           = "Prom12"
@@ -160,12 +160,11 @@ module "prom" {
 }
 
 
-
 module "centos" {
 
   public_ssh_key = var.public_ssh_key
   host           = "10.1.10.31"
-  ip = "10.1.10.11/24"
+  ip = var.centos_ip
   start          = true
   target_node    = "pve1"
   name           = "CentOS11"
@@ -175,3 +174,48 @@ module "centos" {
   }
   proxmox_resource_pass = var.proxmox_resource_pass
 }
+
+
+resource "null_resource" "wait" {
+   depends_on = [module.prom,module.graf,module.testos15,module.testos16]
+  
+}
+resource "null_resource" "ansible" {
+  depends_on = [null_resource.wait]
+
+  provisioner "local-exec" {
+    command = <<EOT
+echo "[prom]" > ../Ansible/hosts
+echo "$(terraform output -raw prometheus_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
+ansible-playbook -i ../Ansible/hosts ../Ansible/prom.yml 
+
+echo "[graf]" >> ../Ansible/hosts
+echo "$(terraform output -raw grafana_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
+ansible-playbook -i ../Ansible/hosts ../Ansible/graf.yml 
+
+echo "[jenkins]" >> ../Ansible/hosts
+echo "$(terraform output -raw jenkins_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
+ansible-playbook -i ../Ansible/hosts ../Ansible/jenkins.yml 
+
+echo "[centos]" >> ../Ansible/hosts
+echo "$(terraform output -raw centos_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
+ansible-playbook -i ../Ansible/hosts ../Ansible/centos.yml 
+
+echo "[testos16]" >> ../Ansible/hosts
+echo "$(terraform output -raw testos16_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
+ansible-playbook -i ../Ansible/hosts ../Ansible/testos16.yml 
+
+echo "[testos15]" >> ../Ansible/hosts
+echo "$(terraform output -raw testos15_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
+ansible-playbook -i ../Ansible/hosts ../Ansible/testos15.yml 
+
+EOT
+  }
+}
+
+
+
+
+
+
+

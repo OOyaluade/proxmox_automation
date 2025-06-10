@@ -42,15 +42,9 @@ resource "null_resource" "bootstrap_promgraph" {
       "pct exec ${proxmox_lxc.graf.vmid} -- bash -c 'curl \"0.0.0.0\"'",
       "pct exec ${proxmox_lxc.graf.vmid} -- bash -c 'apt -y update'",
       "pct exec ${proxmox_lxc.graf.vmid} -- bash -c 'apt install -y openssh-server'",
-      "pct exec ${proxmox_lxc.graf.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.graf.vmid} -- systemctl enable --now sshd",
+      "pct exec ${proxmox_lxc.graf.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.graf.vmid} -- systemctl enable --now ssh",
       "pct exec ${proxmox_lxc.graf.vmid} -- systemctl restart ssh",
-      "pct exec ${proxmox_lxc.graf.vmid} -- apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common",
-      "pct exec ${proxmox_lxc.graf.vmid} -- apt-get install -y docker.io",
-
-      "pct exec ${proxmox_lxc.graf.vmid} -- systemctl enable docker",
-      "pct exec ${proxmox_lxc.graf.vmid} -- systemctl start docker",
-      "pct exec ${proxmox_lxc.graf.vmid} -- docker run -d --name grafana -p 3000:3000 grafana/grafana"
     ]
 
     connection {

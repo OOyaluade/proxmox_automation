@@ -42,15 +42,10 @@ resource "null_resource" "bootstrap_promgraph" {
       "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'curl \"0.0.0.0\"'",
       "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'apt -y update'",
       "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'apt install -y openssh-server'",
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.testos.vmid} -- systemctl enable --now sshd",
+      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.testos.vmid} -- systemctl enable --now ssh",
       "pct exec ${proxmox_lxc.testos.vmid} -- systemctl restart ssh",
-      # "pct exec ${proxmox_lxc.testos.vmid} -- apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common",
-      # "pct exec ${proxmox_lxc.testos.vmid} -- apt-get install -y docker.io",
 
-      # "pct exec ${proxmox_lxc.testos.vmid} -- systemctl enable docker",
-      # "pct exec ${proxmox_lxc.testos.vmid} -- systemctl start docker",
-      # "pct exec ${proxmox_lxc.testos.vmid} -- docker run -d --name testosana -p 3000:3000 testosana/testosana"
     ]
 
     connection {

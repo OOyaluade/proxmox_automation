@@ -42,15 +42,10 @@ resource "null_resource" "bootstrap_promgraph" {
       "pct exec ${proxmox_lxc.prom.vmid} -- bash -c 'curl \"0.0.0.0\"'",
       "pct exec ${proxmox_lxc.prom.vmid} -- bash -c 'apt -y update'",
       "pct exec ${proxmox_lxc.prom.vmid} -- bash -c 'apt install -y openssh-server'",
-      "pct exec ${proxmox_lxc.prom.vmid} -- bash -c \"sed -i '/^PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.prom.vmid} -- systemctl enable --now sshd",
+      "pct exec ${proxmox_lxc.prom.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.prom.vmid} -- systemctl enable --now ssh",
       "pct exec ${proxmox_lxc.prom.vmid} -- systemctl restart ssh",
-      "pct exec ${proxmox_lxc.prom.vmid} -- apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common",
-      "pct exec ${proxmox_lxc.prom.vmid} -- apt-get install -y docker.io",
 
-      "pct exec ${proxmox_lxc.prom.vmid} -- systemctl enable docker",
-      "pct exec ${proxmox_lxc.prom.vmid} -- systemctl start docker",
-      "pct exec ${proxmox_lxc.prom.vmid} -- docker run -d --name prometheus -p 9090:9090 prom/prometheus",
 
     ]
 
