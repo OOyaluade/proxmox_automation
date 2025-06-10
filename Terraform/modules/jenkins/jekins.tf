@@ -18,7 +18,7 @@ resource "proxmox_lxc" "jenkins" {
   network {
     name   = "eth0"
     bridge = "vmbr0"
-    ip     = "10.1.10.10/24"
+    ip     = var.ip
     gw     = "10.1.10.1"
   }
   features {

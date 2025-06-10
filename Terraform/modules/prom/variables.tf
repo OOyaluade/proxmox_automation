@@ -16,10 +16,12 @@ variable "start" {
 
 }
 
-variable "host" {
-  type = string
-}
 variable "public_ssh_key" {
+  type = string
+
+}
+
+variable "host" {
   type = string
 
 }

@@ -1,4 +1,9 @@
-"qm set ${proxmox_vm_qemu.NODE1A.vmid} -ide0 LVM-THIN:vm-${proxmox_vm_qemu.NODE1A.vmid}-disk-0",
-"qm set ${proxmox_vm_qemu.NODE1A.vmid} -ide1 LVM-THIN:vm-${proxmox_vm_qemu.NODE1A.vmid}-disk-1",
-"qm set ${proxmox_vm_qemu.NODE1A.vmid} -ide2 LVM-THIN:vm-${proxmox_vm_qemu.NODE1A.vmid}-disk-2",
-"qm set ${proxmox_vm_qemu.NODE1A.vmid} -ide3 LVM-THIN:vm-${proxmox_vm_qemu.NODE1A.vmid}-disk-3"
+terraform refresh module.centos.null_resource.PermitRootLogin
+terraform refresh module.centos.proxmox_lxc.centos
+terraform refresh module.centos.time_sleep.wait_30_seconds
+terraform refresh module.graf.null_resource.bootstrap_promgraph
+terraform refresh module.graf.proxmox_lxc.graf
+terraform refresh module.jenkins.null_resource.bootstrap_jenkins
+terraform refresh module.jenkins.proxmox_lxc.jenkins
+terraform refresh module.prom.null_resource.bootstrap_promgraph
+terraform refresh module.prom.proxmox_lxc.prom

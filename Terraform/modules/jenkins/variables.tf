@@ -23,3 +23,7 @@ variable "public_ssh_key" {
   type = string
 
 }
+variable "ip" {
+  type = string
+  
+}

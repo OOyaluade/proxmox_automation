@@ -22,7 +22,7 @@ resource "proxmox_lxc" "centos" {
   network {
     name   = "eth0"
     bridge = "vmbr0"
-    ip     = "10.1.10.60/24"
+    ip     = var.ip
     gw     = "10.1.10.1"
   }
 
@@ -33,10 +33,6 @@ resource "proxmox_lxc" "centos" {
 
 }
 
-resource "time_sleep" "wait_30_seconds" {
-  depends_on      = [proxmox_lxc.centos] # or whatever resource you want to wait for
-  create_duration = "15s"
-}
 
 resource "null_resource" "PermitRootLogin" {
   provisioner "remote-exec" {

@@ -86,13 +86,40 @@ module "vyos_router" {
 
 
 ####################################################################3
+module "testos16" {
+  source                = "./modules/jenkins"
+  host                  = "10.1.10.33"
+  ip = "10.1.10.16/24"
+  start                 = true
+  target_node           = "pve3"
+  name                  = "testos16"
+  public_ssh_key        = var.public_ssh_key
+  proxmox_resource_pass = var.proxmox_resource_pass
+  providers = {
+    proxmox = proxmox
+  }
+}
+module "testos15" {
+  source                = "./modules/jenkins"
+  host                  = "10.1.10.33"
+  ip = "10.1.10.15/24"
+  start                 = true
+  target_node           = "pve3"
+  name                  = "testos15"
+  public_ssh_key        = var.public_ssh_key
+  proxmox_resource_pass = var.proxmox_resource_pass
+  providers = {
+    proxmox = proxmox
+  }
+}
 
 module "jenkins" {
   source                = "./modules/jenkins"
   host                  = "10.1.10.33"
+  ip = "10.1.10.14/24"
   start                 = true
   target_node           = "pve3"
-  name                  = "Jenkins"
+  name                  = "Jenkins14"
   public_ssh_key        = var.public_ssh_key
   proxmox_resource_pass = var.proxmox_resource_pass
   providers = {
@@ -101,14 +128,31 @@ module "jenkins" {
 }
 
 
-module "prometheus_graphana" {
+module "graf" {
 
   public_ssh_key = var.public_ssh_key
   host           = "10.1.10.33"
+  ip = "10.1.10.13/24"
   start          = true
   target_node    = "pve3"
-  name           = "PromGraph"
-  source         = "./modules/prom-graph"
+  name           = "Graf13"
+  source         = "./modules/graf"
+  providers = {
+    proxmox = proxmox
+  }
+  proxmox_resource_pass = var.proxmox_resource_pass
+}
+
+
+module "prom" {
+
+  public_ssh_key = var.public_ssh_key
+  host           = "10.1.10.33"
+    ip = "10.1.10.12/24"
+  start          = true
+  target_node    = "pve3"
+  name           = "Prom12"
+  source         = "./modules/prom"
   providers = {
     proxmox = proxmox
   }
@@ -121,9 +165,10 @@ module "centos" {
 
   public_ssh_key = var.public_ssh_key
   host           = "10.1.10.31"
+  ip = "10.1.10.11/24"
   start          = true
   target_node    = "pve1"
-  name           = "CentOS-REDHat"
+  name           = "CentOS11"
   source         = "./modules/centos"
   providers = {
     proxmox = proxmox

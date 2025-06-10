@@ -25,3 +25,7 @@ variable "host" {
   type = string
 
 }
+variable "ip" {
+  type = string
+  
+}
