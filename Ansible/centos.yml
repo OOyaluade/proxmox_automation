@@ -1,0 +1,105 @@
+---
+- name: Bootstrap CentOS with Node Exporter
+  hosts: centos
+  become: true
+  vars:
+    node_exporter_version: "1.8.1"
+    node_exporter_user: node_exporter
+  tasks:
+    - name: Ensure EPEL repo is enabled
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Ensure YUM cache is updated
+      yum:
+        update_cache: yes
+
+    - name: Ensure dependencies are installed
+      yum:
+        name:
+          - openssh-server
+          - ca-certificates
+          - curl
+          - python3
+          - python3-pip
+          - tar
+          # - docker
+        state: present
+
+    # - name: Ensure Docker is enabled and started
+    #   systemd:
+    #     name: docker
+    #     enabled: yes
+    #     state: started
+
+    - name: Ensure python3-requests is installed
+      pip:
+        name: requests
+        executable: pip3
+
+    - name: Ensure node_exporter system user exists
+      user:
+        name: "{{ node_exporter_user }}"
+        shell: /usr/sbin/nologin
+        system: yes
+        create_home: no
+
+    - name: Download Node Exporter tarball
+      get_url:
+        url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+        dest: /tmp/node_exporter.tar.gz
+        mode: '0644'
+
+    - name: Extract node_exporter binary
+      unarchive:
+        src: /tmp/node_exporter.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+    - name: Move binary to /usr/local/bin
+      copy:
+        src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
+        dest: /usr/local/bin/node_exporter
+        owner: "{{ node_exporter_user }}"
+        group: "{{ node_exporter_user }}"
+        mode: '0755'
+        remote_src: yes
+
+    - name: Create systemd service file for node_exporter
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Prometheus Node Exporter
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          User={{ node_exporter_user }}
+          Group={{ node_exporter_user }}
+          Type=simple
+          ExecStart=/usr/local/bin/node_exporter
+
+          [Install]
+          WantedBy=default.target
+        mode: '0644'
+        force: yes
+
+    - name: Reload systemd to read new service file
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start node_exporter service
+      systemd:
+        name: node_exporter
+        state: started
+        enabled: yes
+
+    - name: Clean up tarball and folder
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/node_exporter.tar.gz"
+        - "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64"

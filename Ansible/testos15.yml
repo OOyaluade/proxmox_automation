@@ -1,0 +1,108 @@
+---
+- name: Bootstrap testos15
+  hosts: testos15  # change to 'testos15' if you use a separate host group
+  become: true
+  vars:
+    node_exporter_version: "1.8.1"
+    node_exporter_user: node_exporter
+
+  
+  tasks:
+
+    - name: Ensure apt cache is updated
+      apt:
+        update_cache: yes
+
+    - name: Ensure openssh-server is installed
+      apt:
+        name: openssh-server
+        state: present
+
+    - name: Ensure Docker dependencies are installed
+      apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker is enabled and started
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Ensure python3-requests is installed
+      apt:
+        name: python3-requests
+        state: present
+
+
+    - name: Ensure system user exists
+      user:
+        name: "{{ node_exporter_user }}"
+        shell: /usr/sbin/nologin
+        system: yes
+        create_home: no
+
+    - name: Download Node Exporter tarball
+      get_url:
+        url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+        dest: /tmp/node_exporter.tar.gz
+        mode: '0644'
+
+    - name: Extract node_exporter binary
+      unarchive:
+        src: /tmp/node_exporter.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+    - name: Move binary to /usr/local/bin
+      copy:
+        src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
+        dest: /usr/local/bin/node_exporter
+        owner: "{{ node_exporter_user }}"
+        group: "{{ node_exporter_user }}"
+        mode: '0755'
+        remote_src: yes
+
+    - name: Create systemd service file for node_exporter
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Prometheus Node Exporter
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          User={{ node_exporter_user }}
+          Group={{ node_exporter_user }}
+          Type=simple
+          ExecStart=/usr/local/bin/node_exporter
+
+          [Install]
+          WantedBy=default.target
+        mode: '0644'
+
+    - name: Reload systemd to read new service file
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start node_exporter service
+      systemd:
+        name: node_exporter
+        state: started
+        enabled: yes
+
+    - name: Clean up tarball and folder
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/node_exporter.tar.gz"
+        - "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64"

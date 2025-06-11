@@ -1,0 +1,126 @@
+---
+- name: Bootstrap Prometheus
+  hosts: prom
+  become: true
+
+  vars:
+    prometheus_config_dir: /opt/prometheus
+    prometheus_config_path: /opt/prometheus/prometheus.yml
+
+  tasks:
+    - name: Ensure apt cache is updated
+      apt:
+        update_cache: yes
+
+    - name: Ensure Docker dependencies are installed
+      apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+
+    - name: Ensure python3-requests is installed
+      apt:
+        name: python3-requests
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker is enabled and started
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Ensure Prometheus config directory exists
+      file:
+        path: "{{ prometheus_config_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Create prometheus.yml (with comments and alertmanager section) if it does not exist
+      copy:
+        dest: "{{ prometheus_config_path }}"
+        content: |
+          # my global config
+          global:
+            scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+            evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+            # scrape_timeout is set to the global default (10s).
+
+          # Alertmanager configuration
+          alerting:
+            alertmanagers:
+            - static_configs:
+              - targets:
+                      # - alertmanager:9093
+
+          # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+          rule_files:
+            # - "first_rules.yml"
+            # - "second_rules.yml"
+
+          # A scrape configuration containing exactly one endpoint to scrape:
+          # Here it's Prometheus itself.
+          scrape_configs:
+            # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+            - job_name: 'prometheus'
+              # metrics_path defaults to '/metrics'
+              # scheme defaults to 'http'.
+              static_configs:
+              - targets: ['localhost:9090']
+            
+            - job_name: 'testos15_application_server'
+              # metrics_path defaults to '/metrics'
+              # scheme defaults to 'http'.
+              static_configs:
+              - targets: ['10.1.10.15:9100']
+
+            - job_name: 'testos16_application_server'
+              # metrics_path defaults to '/metrics'
+              # scheme defaults to 'http'.
+              static_configs:
+              - targets: ['10.1.10.16:9100']
+
+            - job_name: 'centos'
+              # metrics_path defaults to '/metrics'
+              # scheme defaults to 'http'.
+              static_configs:
+              - targets: ['10.1.10.11:9100']
+
+            - job_name: 'graf'
+              # metrics_path defaults to '/metrics'
+              # scheme defaults to 'http'.
+              static_configs:
+              - targets: ['10.1.10.13:9100']
+
+            - job_name: 'jenkins'
+              # metrics_path defaults to '/metrics'
+              # scheme defaults to 'http'.
+              static_configs:
+              - targets: ['10.1.10.14:9100']
+
+
+
+
+
+        owner: root
+        group: root
+        mode: '0644'
+        force: yes   # Only creates if not already present
+
+    - name: Run Prometheus container with mounted config
+      community.docker.docker_container:
+        name: prometheus
+        image: prom/prometheus
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "9090:9090"
+        volumes:
+          - "{{ prometheus_config_path }}:/etc/prometheus/prometheus.yml"
