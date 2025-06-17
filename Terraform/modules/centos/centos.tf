@@ -15,7 +15,7 @@ resource "proxmox_lxc" "centos" {
   swap   = 512
 
   rootfs {
-    storage = "LVM-THIN"
+    storage = "slow-ceph"
     size    = "4G"
   }
 

@@ -12,7 +12,7 @@ resource "proxmox_lxc" "jenkins" {
   memory = 2048
   swap   = 512
   rootfs {
-    storage = "LVM-THIN"
+    storage = "slow-ceph"
     size    = "8G"
   }
   network {

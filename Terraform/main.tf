@@ -185,29 +185,29 @@ resource "null_resource" "ansible" {
 
   provisioner "local-exec" {
     command = <<EOT
-echo "[prom]" > ../Ansible/hosts
+echo "[prom]" > ../Ansible/machine_loader
 echo "$(terraform output -raw prometheus_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/hosts ../Ansible/prom.yml 
+ansible-playbook -i ../Ansible/machine_loader ../Ansible/prom.yml 
 
-echo "[graf]" >> ../Ansible/hosts
+echo "[graf]" >> ../Ansible/machine_loader
 echo "$(terraform output -raw grafana_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/hosts ../Ansible/graf.yml 
+ansible-playbook -i ../Ansible/machine_loader ../Ansible/graf.yml 
 
-echo "[jenkins]" >> ../Ansible/hosts
+echo "[jenkins]" >> ../Ansible/machine_loader
 echo "$(terraform output -raw jenkins_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/hosts ../Ansible/jenkins.yml 
+ansible-playbook -i ../Ansible/machine_loader ../Ansible/jenkins.yml 
 
-echo "[centos]" >> ../Ansible/hosts
+echo "[centos]" >> ../Ansible/machine_loader
 echo "$(terraform output -raw centos_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/hosts ../Ansible/centos.yml 
+ansible-playbook -i ../Ansible/machine_loader ../Ansible/centos.yml 
 
-echo "[testos16]" >> ../Ansible/hosts
+echo "[testos16]" >> ../Ansible/machine_loader
 echo "$(terraform output -raw testos16_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/hosts ../Ansible/testos16.yml 
+ansible-playbook -i ../Ansible/machine_loader ../Ansible/testos16.yml 
 
-echo "[testos15]" >> ../Ansible/hosts
+echo "[testos15]" >> ../Ansible/machine_loader
 echo "$(terraform output -raw testos15_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/hosts ../Ansible/testos15.yml 
+ansible-playbook -i ../Ansible/machine_loader ../Ansible/testos15.yml 
 
 EOT
   }

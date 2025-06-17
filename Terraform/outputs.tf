@@ -27,3 +27,4 @@ output "centos_ip" {
   value = var.centos_ip
   
 }
+

@@ -1,0 +1,14 @@
+- name: Test VyOS reachability
+  hosts: vyospve1
+  gather_facts: false
+  tasks:
+    - name: show configuration on ethernet devices eth0 and eth1
+      vyos.vyos.vyos_command:
+        commands:
+          - show interfaces ethernet {{ item }}
+      with_items:
+        - eth0
+        - eth1
+
+
+
