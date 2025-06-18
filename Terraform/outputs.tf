@@ -4,27 +4,31 @@ output "prometheus_ip" {
 
 output "grafana_ip" {
   value = var.graf_ip
-  
+
 }
 
 output "testos16_ip" {
   value = var.testos16_ip
-  
+
 }
 
 output "testos15_ip" {
   value = var.testos15_ip
-  
+
 }
 
 output "jenkins_ip" {
   value = var.jenkins_ip
-  
+
 }
 
 
 output "centos_ip" {
   value = var.centos_ip
-  
+
 }
 
+output "docker_ip" {
+  value = var.docker_ip
+
+}
