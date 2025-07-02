@@ -42,7 +42,7 @@ EOT
 
 
 
-resource "null_resource" "permit_root_login" {
+resource "null_resource" "PermitRootLogin" {
   provisioner "remote-exec" {
     inline = [
 
@@ -65,7 +65,7 @@ resource "null_resource" "permit_root_login" {
 }
 
 resource "null_resource" "ansible_trigger" {
-  depends_on = [proxmox_lxc.graf,null_resource.permit_root_login]
+  depends_on = [proxmox_lxc.graf,null_resource.PermitRootLogin]
   provisioner "local-exec" {
     command = <<EOT
     ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/graf.yml

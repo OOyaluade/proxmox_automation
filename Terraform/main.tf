@@ -96,19 +96,6 @@ module "testos16" {
   }
 }
 
-resource "null_resource" "testos16" {
-
-
-  provisioner "local-exec" {
-    command = <<EOT
-
-
-echo "[testos16]" >> ../Ansible/machine_loader.int
-echo "$(terraform output -raw testos16_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
-ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/testos16.yml 
-EOT
-  }
-}
 
 module "testos15" {
   source                = "./modules/testos"
@@ -123,18 +110,7 @@ module "testos15" {
     proxmox = proxmox
   }
 }
-resource "null_resource" "testos15" {
 
-
-  provisioner "local-exec" {
-    command = <<EOT
-
-echo "[testos15]" >> ../Ansible/machine_loader.int
-echo "$(terraform output -raw testos15_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
-ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/testos15.yml 
-EOT
-  }
-}
 
 
 module "jenkins" {
@@ -150,17 +126,7 @@ module "jenkins" {
     proxmox = proxmox
   }
 }
-resource "null_resource" "jenkins" {
 
-
-  provisioner "local-exec" {
-    command = <<EOT
-echo "[jenkins]" >> ../Ansible/machine_loader.int
-echo "$(terraform output -raw jenkins_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
-ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/jenkins.yml 
-EOT
-  }
-}
 
 module "graf" {
 
@@ -177,17 +143,6 @@ module "graf" {
   proxmox_resource_pass = var.proxmox_resource_pass
 }
 
-resource "null_resource" "graf" {
-
-
-  provisioner "local-exec" {
-    command = <<EOT
-echo "[graf]" >> ../Ansible/machine_loader.int
-echo "$(terraform output -raw grafana_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
-ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/graf.yml 
-EOT
-  }
-}
 
 
 module "prom" {
@@ -206,17 +161,7 @@ module "prom" {
 }
 
 
-resource "null_resource" "prom" {
 
-
-  provisioner "local-exec" {
-    command = <<EOT
-echo "[prom]" >> ../Ansible/machine_loader.int
-echo "$(terraform output -raw prometheus_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
-ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/prom.yml 
-EOT
-  }
-}
 
 
 
@@ -241,32 +186,19 @@ module "centos" {
 
 
 
-# module "docker17" {
-#   source                = "./modules/docker"
-#   host                  = "10.1.10.33"
-#   ip                    = var.docker_ip
-#   start                 = true
-#   target_node           = "pve3"
-#   name                  = "docker17"
-#   public_ssh_key        = var.public_ssh_key
-#   proxmox_resource_pass = var.proxmox_resource_pass
-#   providers = {
-#     proxmox = proxmox
-#   }
-# }
-# resource "null_resource" "docker17" {
-#   depends_on = [module.docker17]
-
-#   provisioner "local-exec" {
-#     command = <<EOT
-
-# echo "[docker17]" >> ../Ansible/machine_loader.int
-# echo "$(terraform output -raw docker_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
-# ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/docker17.yml 
-
-# EOT
-#   }
-# }
+module "docker17" {
+  source                = "./modules/docker"
+  host                  = "10.1.10.33"
+  ip                    = var.docker_ip
+  start                 = true
+  target_node           = "pve3"
+  name                  = "docker17"
+  public_ssh_key        = var.public_ssh_key
+  proxmox_resource_pass = var.proxmox_resource_pass
+  providers = {
+    proxmox = proxmox
+  }
+}
 
 
 
