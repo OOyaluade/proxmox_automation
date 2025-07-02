@@ -70,7 +70,7 @@ resource "null_resource" "ansible_trigger" {
   depends_on = [proxmox_lxc.docker,null_resource.PermitRootLogin ]
   provisioner "local-exec" {
     command = <<EOT
-    ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/centos.yml
+    ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/${var.name}.yml
     EOT
    
   }
