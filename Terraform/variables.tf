@@ -48,8 +48,8 @@ variable "jenkins_ip" {
 variable "centos_ip" {
   type    = string
   default = "10.1.10.11/24"
-
 }
+
 
 variable "docker_ip" {
   type    = string

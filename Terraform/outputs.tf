@@ -32,3 +32,5 @@ output "docker_ip" {
   value = var.docker_ip
 
 }
+
+

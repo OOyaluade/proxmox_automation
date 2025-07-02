@@ -3,7 +3,7 @@ resource "proxmox_lxc" "centos" {
   target_node     = var.target_node
   ostemplate      = "local:vztmpl/centos-9-stream-default_20240828_amd64.tar.xz"
   password        = var.proxmox_resource_pass
-  unprivileged    = true
+  unprivileged    = var.unprivileged  
   start           = var.start
   tags            = "ComputeUserL"
   ssh_public_keys = var.public_ssh_key
@@ -29,8 +29,14 @@ resource "proxmox_lxc" "centos" {
   features {
     nesting = true
   }
+  provisioner "local-exec" {
+    command = <<EOT
+echo "[centos]" >> ../Ansible/machine_loader.int
 
+echo "${split("/",var.ip)[0]} ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
 
+EOT
+  }
 }
 
 
@@ -54,4 +60,15 @@ resource "null_resource" "PermitRootLogin" {
     }
   }
   depends_on = [proxmox_lxc.centos]
+}
+
+resource "null_resource" "ansible_trigger" {
+  depends_on = [proxmox_lxc.centos,null_resource.PermitRootLogin ]
+  provisioner "local-exec" {
+    command = <<EOT
+    ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/centos.yml
+    EOT
+   
+  }
+  
 }

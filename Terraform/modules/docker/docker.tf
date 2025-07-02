@@ -1,4 +1,4 @@
-resource "proxmox_lxc" "testos" {
+resource "proxmox_lxc" "docker" {
   hostname        = var.name
   target_node     = var.target_node
   ostemplate      = "local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst"
@@ -39,12 +39,12 @@ resource "null_resource" "bootstrap_promgraph" {
   provisioner "remote-exec" {
     inline = [
 
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'curl \"0.0.0.0\"'",
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'apt -y update'",
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'apt install -y openssh-server'",
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.testos.vmid} -- systemctl enable --now ssh",
-      "pct exec ${proxmox_lxc.testos.vmid} -- systemctl restart ssh",
+      "pct exec ${proxmox_lxc.docker.vmid} -- bash -c 'curl \"0.0.0.0\"'",
+      "pct exec ${proxmox_lxc.docker.vmid} -- bash -c 'apt -y update'",
+      "pct exec ${proxmox_lxc.docker.vmid} -- bash -c 'apt install -y openssh-server'",
+      "pct exec ${proxmox_lxc.docker.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.docker.vmid} -- systemctl enable --now ssh",
+      "pct exec ${proxmox_lxc.docker.vmid} -- systemctl restart ssh",
 
     ]
 

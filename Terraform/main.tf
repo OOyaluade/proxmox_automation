@@ -59,33 +59,29 @@ module "vyos_router" {
 #   }
 # }
 
-# module "win11" {
-#   source = "./modules/win11"
-#   providers = {
-#     proxmox = proxmox
-#   }
-# }
+module "win22" {
+  source = "./modules/win22"
+  target_node = "pve1"
+  name = "Win22"
+  providers = {
+    proxmox = proxmox
+    
+  }
+}
 
-# module "win22" {
-#   for_each = tomap({
-#     WINAPVE1 = {
-#       target_node = "pve2"  
-#     } 
-#     WINBPVE1 = {
-#       target_node = "pve2"
-#     } 
-#   })
 
-# target_node = each.value.target_node
-# name = each.key
-#   source = "./modules/win22"
-#   providers = {
-#     proxmox = proxmox
-#   }
-# }
+
+
 
 
 ####################################################################3
+
+
+####################################################################3
+
+
+
+
 module "testos16" {
   source                = "./modules/testos"
   host                  = "10.1.10.33"
@@ -101,15 +97,15 @@ module "testos16" {
 }
 
 resource "null_resource" "testos16" {
-  depends_on = [null_resource.wait]
+
 
   provisioner "local-exec" {
     command = <<EOT
 
 
-echo "[testos16]" >> ../Ansible/machine_loader
-echo "$(terraform output -raw testos16_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/machine_loader ../Ansible/testos16.yml 
+echo "[testos16]" >> ../Ansible/machine_loader.int
+echo "$(terraform output -raw testos16_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
+ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/testos16.yml 
 EOT
   }
 }
@@ -128,14 +124,14 @@ module "testos15" {
   }
 }
 resource "null_resource" "testos15" {
-  depends_on = [null_resource.wait]
+
 
   provisioner "local-exec" {
     command = <<EOT
 
-echo "[testos15]" >> ../Ansible/machine_loader
-echo "$(terraform output -raw testos15_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/machine_loader ../Ansible/testos15.yml 
+echo "[testos15]" >> ../Ansible/machine_loader.int
+echo "$(terraform output -raw testos15_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
+ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/testos15.yml 
 EOT
   }
 }
@@ -155,13 +151,13 @@ module "jenkins" {
   }
 }
 resource "null_resource" "jenkins" {
-  depends_on = [null_resource.wait]
+
 
   provisioner "local-exec" {
     command = <<EOT
-echo "[jenkins]" >> ../Ansible/machine_loader
-echo "$(terraform output -raw jenkins_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/machine_loader ../Ansible/jenkins.yml 
+echo "[jenkins]" >> ../Ansible/machine_loader.int
+echo "$(terraform output -raw jenkins_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
+ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/jenkins.yml 
 EOT
   }
 }
@@ -182,13 +178,13 @@ module "graf" {
 }
 
 resource "null_resource" "graf" {
-  depends_on = [null_resource.wait]
+
 
   provisioner "local-exec" {
     command = <<EOT
-echo "[graf]" >> ../Ansible/machine_loader
-echo "$(terraform output -raw grafana_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/machine_loader ../Ansible/graf.yml 
+echo "[graf]" >> ../Ansible/machine_loader.int
+echo "$(terraform output -raw grafana_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
+ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/graf.yml 
 EOT
   }
 }
@@ -211,13 +207,13 @@ module "prom" {
 
 
 resource "null_resource" "prom" {
-  depends_on = [null_resource.wait]
+
 
   provisioner "local-exec" {
     command = <<EOT
-echo "[prom]" > ../Ansible/machine_loader
-echo "$(terraform output -raw prometheus_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/machine_loader ../Ansible/prom.yml 
+echo "[prom]" >> ../Ansible/machine_loader.int
+echo "$(terraform output -raw prometheus_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
+ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/prom.yml 
 EOT
   }
 }
@@ -232,6 +228,7 @@ module "centos" {
   start          = true
   target_node    = "pve1"
   name           = "CentOS11"
+  unprivileged  = true
   source         = "./modules/centos"
   providers = {
     proxmox = proxmox
@@ -240,51 +237,36 @@ module "centos" {
 }
 
 
-resource "null_resource" "centos" {
-  depends_on = [null_resource.wait]
-
-  provisioner "local-exec" {
-    command = <<EOT
-
-echo "[centos]" >> ../Ansible/machine_loader
-echo "$(terraform output -raw centos_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/machine_loader ../Ansible/centos.yml 
-EOT
-  }
-}
-
-resource "null_resource" "wait" {
-  depends_on = [module.prom, module.graf, module.testos15, module.testos16]
-
-}
 
 
-module "docker17" {
-  source                = "./modules/testos"
-  host                  = "10.1.10.33"
-  ip                    = var.testos15_ip
-  start                 = true
-  target_node           = "pve3"
-  name                  = "docker17"
-  public_ssh_key        = var.public_ssh_key
-  proxmox_resource_pass = var.proxmox_resource_pass
-  providers = {
-    proxmox = proxmox
-  }
-}
-resource "null_resource" "docker17" {
-  depends_on = [null_resource.wait]
 
-  provisioner "local-exec" {
-    command = <<EOT
 
-echo "[docker17]" >> ../Ansible/machine_loader
-echo "$(terraform output -raw docker17_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/hosts
-ansible-playbook -i ../Ansible/machine_loader ../Ansible/docker17.yml 
+# module "docker17" {
+#   source                = "./modules/docker"
+#   host                  = "10.1.10.33"
+#   ip                    = var.docker_ip
+#   start                 = true
+#   target_node           = "pve3"
+#   name                  = "docker17"
+#   public_ssh_key        = var.public_ssh_key
+#   proxmox_resource_pass = var.proxmox_resource_pass
+#   providers = {
+#     proxmox = proxmox
+#   }
+# }
+# resource "null_resource" "docker17" {
+#   depends_on = [module.docker17]
 
-EOT
-  }
-}
+#   provisioner "local-exec" {
+#     command = <<EOT
+
+# echo "[docker17]" >> ../Ansible/machine_loader.int
+# echo "$(terraform output -raw docker_ip | cut -d'/' -f1) ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
+# ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/docker17.yml 
+
+# EOT
+#   }
+# }
 
 
 

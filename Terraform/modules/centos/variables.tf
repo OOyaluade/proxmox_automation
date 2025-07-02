@@ -27,3 +27,8 @@ variable "ip" {
   type = string
   
 }
+
+variable "unprivileged" {
+  type = string  
+}
+
