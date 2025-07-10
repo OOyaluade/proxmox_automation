@@ -20,7 +20,7 @@ resource "proxmox_vm_qemu" "win22" {
       ide1 {
         disk {
           size    = "100G"
-          storage = "LVM-THIN"
+          storage = "slow-ceph"
         }
       }
       ide2 {

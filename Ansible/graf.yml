@@ -1,6 +1,6 @@
 ---
 - name: Bootstrap Grafana
-  hosts: graf  # change to 'grafana' if you use a separate host group
+  hosts: graf
   become: true
   vars:
     node_exporter_version: "1.8.1"

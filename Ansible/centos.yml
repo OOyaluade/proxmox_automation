@@ -24,14 +24,33 @@
           - python3
           - python3-pip
           - tar
-          # - docker
         state: present
 
-    # - name: Ensure Docker is enabled and started
-    #   systemd:
-    #     name: docker
-    #     enabled: yes
-    #     state: started
+
+    - name: Add Docker CE repository
+      yum_repository:
+        name: docker-ce-stable
+        description: Docker CE Stable - $basearch
+        baseurl: https://download.docker.com/linux/centos/9/$basearch/stable
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: https://download.docker.com/linux/centos/gpg
+
+
+    - name: Install Docker
+      yum:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+    
+    - name: Ensure Docker is enabled and started
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
 
     - name: Ensure python3-requests is installed
       pip:
@@ -103,3 +122,41 @@
       loop:
         - "/tmp/node_exporter.tar.gz"
         - "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64"
+    - name: Create 'dami' user with home directory and bash shell
+      user:
+        name: dami
+        shell: /bin/bash
+        create_home: yes
+        groups: wheel
+        append: yes
+        password: "{{ '2723damyXX.' | password_hash('sha512') }}"  # Secure hash at runtime
+
+
+    - name: Allow 'dami' passwordless sudo (full root privilege)
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Confirm sudo works for 'dami' (debug safety check)
+      become: true
+      become_user: dami
+      command: sudo whoami
+      register: sudo_check
+
+    - name: Show sudo check result
+      debug:
+        msg: "Sudo works for dami: {{ sudo_check.stdout }}"
+    - name: Ensure proper permissions on dami's home directory
+      file:
+        path: /home/dami
+        owner: dami
+        group: dami
+        mode: '0750'
+
+    - name: Install Ansible 
+      yum:
+        name: ansible
+        state: present

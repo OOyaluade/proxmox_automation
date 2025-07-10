@@ -1,37 +1,87 @@
 ---
-- name: Bootstrap testos
-  hosts: testos 
+- name: Bootstrap docker17
+  hosts: docker  # 
   become: true
   vars:
     node_exporter_version: "1.8.1"
     node_exporter_user: node_exporter
-
   
   tasks:
 
-    - name: Ensure apt cache is updated and install required packages
+    - name: Ensure apt cache is updated
+      apt:
+        update_cache: yes
+
+    - name: Ensure openssh-server is installed
+      apt:
+        name: openssh-server
+        state: present
+
+    - name: Ensure Docker dependencies are installed
       apt:
         name:
-          - python3
-          - python3-requests
-          - python3-venv
-          - python3-pip
-          - python3-full
-          - mysql-server
-          - mysql-client
-          - python3-mysqldb
-          - openssh-server
           - ca-certificates
           - curl
-          - docker.io
         state: present
-        update_cache: true
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
 
     - name: Ensure Docker is enabled and started
       systemd:
         name: docker
         enabled: yes
         state: started
+
+    - name: Ensure python3-requests is installed
+      apt:
+        name: python3-requests
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Kill any apt-get processes (DANGEROUS in prod)
+      shell: killall apt-get || true
+      ignore_errors: yes
+    
+    - name: Recover from interrupted dpkg
+      shell: dpkg --configure -a
+      args:
+      become: true
+
+
+    - name: Ensure pip for Python 3 is installed
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install pytest via apt (safest)
+      apt:
+        name: python3-pytest
+        state: present
+
+    - name: Create plugin directory if missing
+      file:
+        path: /usr/local/lib/docker/cli-plugins
+        state: directory
+        mode: '0755'
+
+
+    - name: Download Docker Compose plugin
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64
+        dest: /usr/local/lib/docker/cli-plugins/docker-compose
+        mode: '0755'
+
+    - name: Create plugin directory if missing
+      file:
+        path: /usr/local/lib/docker/cli-plugins
+        state: directory
+        mode: '0755'
 
 
     - name: Ensure system user exists

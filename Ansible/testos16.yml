@@ -1,44 +1,37 @@
 ---
-- name: Bootstrap testos16
-  hosts: testos16  # change to 'testos15' if you use a separate host group
+- name: Bootstrap testos
+  hosts: testos 
   become: true
   vars:
     node_exporter_version: "1.8.1"
     node_exporter_user: node_exporter
+
   
   tasks:
 
-    - name: Ensure apt cache is updated
-      apt:
-        update_cache: yes
-
-    - name: Ensure openssh-server is installed
-      apt:
-        name: openssh-server
-        state: present
-
-    - name: Ensure Docker dependencies are installed
+    - name: Ensure apt cache is updated and install required packages
       apt:
         name:
+          - python3
+          - python3-requests
+          - python3-venv
+          - python3-pip
+          - python3-full
+          - mysql-server
+          - mysql-client
+          - python3-mysqldb
+          - openssh-server
           - ca-certificates
           - curl
+          - docker.io
         state: present
-
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
+        update_cache: true
 
     - name: Ensure Docker is enabled and started
       systemd:
         name: docker
         enabled: yes
         state: started
-
-    - name: Ensure python3-requests is installed
-      apt:
-        name: python3-requests
-        state: present
 
 
     - name: Ensure system user exists

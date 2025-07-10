@@ -80,8 +80,50 @@ module "win22" {
 ####################################################################3
 
 
+module "target_ubuntu0" {
+  vm_state    = "running"
+  name        = "WebUbuntuTarget0"
+  target_node = "pve2"
+  ip = "10.1.10.20"
+  source = "./modules/target_ubuntu"
+  providers = {
+    proxmox = proxmox
+  }
+}
 
 
+module "target_ubuntu1" {
+  vm_state    = "running"
+  name        = "ServerUbuntuTarget1"
+  target_node = "pve2"
+  ip = "10.1.10.21"
+  source = "./modules/target_ubuntu"
+  providers = {
+    proxmox = proxmox
+  }
+}
+
+module "target_redhat" {
+  vm_state    = "running"
+  name        = "RedHatTarget"
+  target_node = "pve2"
+  ip = "10.1.10.22"
+  source = "./modules/target_redhat"
+  providers = {
+    proxmox = proxmox
+  }
+}
+
+module "target_susu" {
+  vm_state    = "running"
+  name        = "SUSUTarget"
+  target_node = "pve2"
+  ip = "10.1.10.23"
+  source = "./modules/target_susu"
+  providers = {
+    proxmox = proxmox
+  }
+}
 module "testos16" {
   source                = "./modules/testos"
   host                  = "10.1.10.33"
@@ -145,6 +187,20 @@ module "graf" {
 
 
 
+module "docker17" {
+  source                = "./modules/docker"
+  host                  = "10.1.10.33"
+  ip                    = var.docker_ip
+  start                 = true
+  target_node           = "pve3"
+  name                  = "docker17"
+  public_ssh_key        = var.public_ssh_key
+  proxmox_resource_pass = var.proxmox_resource_pass
+  providers = {
+    proxmox = proxmox
+  }
+}
+
 module "prom" {
 
   public_ssh_key = var.public_ssh_key
@@ -159,6 +215,7 @@ module "prom" {
   }
   proxmox_resource_pass = var.proxmox_resource_pass
 }
+
 
 
 
@@ -184,21 +241,6 @@ module "centos" {
 
 
 
-
-
-module "docker17" {
-  source                = "./modules/docker"
-  host                  = "10.1.10.33"
-  ip                    = var.docker_ip
-  start                 = true
-  target_node           = "pve3"
-  name                  = "docker17"
-  public_ssh_key        = var.public_ssh_key
-  proxmox_resource_pass = var.proxmox_resource_pass
-  providers = {
-    proxmox = proxmox
-  }
-}
 
 
 

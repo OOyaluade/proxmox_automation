@@ -1,4 +1,4 @@
-resource "proxmox_lxc" "testos" {
+resource "proxmox_lxc" "semaphore" {
   hostname        = var.name
   target_node     = var.target_node
   ostemplate      = "local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst"
@@ -31,7 +31,7 @@ resource "proxmox_lxc" "testos" {
   }
   provisioner "local-exec" {
     command = <<EOT
-echo "[testos]" > ../Ansible/${var.name}.int
+echo "[semaphore]" > ../Ansible/${var.name}.int
 
 echo "${split("/",var.ip)[0]} ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/${var.name}.int
 
@@ -46,12 +46,12 @@ resource "null_resource" "PermitRootLogin" {
   provisioner "remote-exec" {
     inline = [
 
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'curl \"0.0.0.0\"'",
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'apt -y update'",
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c 'apt install -y openssh-server'",
-      "pct exec ${proxmox_lxc.testos.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
-      "pct exec ${proxmox_lxc.testos.vmid} -- systemctl enable --now ssh",
-      "pct exec ${proxmox_lxc.testos.vmid} -- systemctl restart ssh",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c 'curl \"0.0.0.0\"'",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c 'apt -y update'",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c 'apt install -y openssh-server'",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- systemctl enable --now ssh",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- systemctl restart ssh",
 
     ]
 
@@ -67,7 +67,7 @@ resource "null_resource" "PermitRootLogin" {
 
 
 resource "null_resource" "ansible_trigger" {
-  depends_on = [proxmox_lxc.testos,null_resource.PermitRootLogin]
+  depends_on = [proxmox_lxc.semaphore,null_resource.PermitRootLogin]
   provisioner "local-exec" {
     command = <<EOT
     ansible-playbook -i ../Ansible/${var.name}.int ../Ansible/${var.name}.yml

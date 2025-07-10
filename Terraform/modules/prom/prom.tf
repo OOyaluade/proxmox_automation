@@ -32,9 +32,9 @@ resource "proxmox_lxc" "prom" {
 
   provisioner "local-exec" {
     command = <<EOT
-echo "[prom]" >> ../Ansible/machine_loader.int
+echo "[prom]" > ../Ansible/prom.int
 
-echo "${split("/",var.ip)[0]} ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/machine_loader.int
+echo "${split("/",var.ip)[0]} ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'" >> ../Ansible/prom.int
 
 EOT
   }
@@ -71,7 +71,7 @@ resource "null_resource" "ansible_trigger" {
   depends_on = [proxmox_lxc.prom,null_resource.PermitRootLogin ]
   provisioner "local-exec" {
     command = <<EOT
-    ansible-playbook -i ../Ansible/machine_loader.int ../Ansible/prom.yml
+    ansible-playbook -i ../Ansible/prom.int ../Ansible/prom.yml
     EOT
    
   }
