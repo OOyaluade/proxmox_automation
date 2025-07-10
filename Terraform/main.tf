@@ -124,12 +124,13 @@ module "target_susu" {
     proxmox = proxmox
   }
 }
+
 module "testos16" {
   source                = "./modules/testos"
   host                  = "10.1.10.33"
   ip                    = var.testos16_ip
   start                 = true
-  target_node           = "pve3"
+  target_node           = "pve1"
   name                  = "testos16"
   public_ssh_key        = var.public_ssh_key
   proxmox_resource_pass = var.proxmox_resource_pass
@@ -144,7 +145,7 @@ module "testos15" {
   host                  = "10.1.10.33"
   ip                    = var.testos15_ip
   start                 = true
-  target_node           = "pve3"
+  target_node           = "pve1"
   name                  = "testos15"
   public_ssh_key        = var.public_ssh_key
   proxmox_resource_pass = var.proxmox_resource_pass

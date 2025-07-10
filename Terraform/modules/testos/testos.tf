@@ -11,7 +11,7 @@ resource "proxmox_lxc" "testos" {
 
 
   cores  = 2
-  memory = 2048
+  memory = 2048*4
   swap   = 512
 
   rootfs {
