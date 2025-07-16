@@ -1,0 +1,4 @@
+web_host_ip: "{{ hostvars[groups['web'][0]]['ansible_host'] | default(groups['web'][0]) }}"
+db_name: flaskdb
+db_user: flaskuser
+db_password: flaskpass

@@ -1,0 +1,23 @@
+---
+
+
+- name: Configure System Setings
+  strategy: free
+  hosts: all
+  become: true
+  roles:
+    - system
+
+- name: Deploy PostgreSQL
+  hosts: db
+  become: true
+  collections:
+    - community.postgresql
+  roles:
+    - db
+
+- name: Deploy a simple Flask app
+  hosts: web
+  become: true
+  roles:
+    - web

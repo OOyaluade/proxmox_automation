@@ -1,0 +1,40 @@
+- name: Show the default IP address
+  debug:
+
+- name: Install system packages (Python3, Postgres)
+  apt:
+    name:
+      - ntpdate
+      - python3-venv
+      - python3-pip
+      - python3-psycopg2
+      - postgresql
+      - postgresql-contrib
+      - libpq-dev
+      - git
+    state: present
+
+# - name: Ensure correct time sync
+#   command: ntpdate -u pool.ntp.org
+
+- name: Touch /etc/localtime to trigger time re-read
+  file:
+    path: /etc/localtime
+    state: touch
+  become: yes
+
+- name: Re-sync timezone data (safe workaround)
+  shell: hwclock --hctosys || true
+  become: yes
+  ignore_errors: true
+
+
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+
+
+

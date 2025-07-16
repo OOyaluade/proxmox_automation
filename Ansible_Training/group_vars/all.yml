@@ -1,0 +1,4 @@
+ansible_python_interpreter: /usr/bin/python3
+db_name: flaskdb
+db_user: flaskuser
+db_password: flaskpass
