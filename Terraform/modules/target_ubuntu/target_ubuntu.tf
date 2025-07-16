@@ -6,7 +6,7 @@ resource "proxmox_vm_qemu" "Target_Ubuntu" {
   scsihw      = "virtio-scsi-single"
   onboot      = true
   boot        = "order=ide1;ide0"
-  agent       = 1
+  agent       = 0
   vm_state    = var.vm_state
   tags        = "TestMachines"
   bios = "ovmf"

@@ -45,11 +45,21 @@ resource "null_resource" "PermitRootLogin" {
     inline = [
       # 1. Update packages and install SSH + essentials
       "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'curl \"0.0.0.0\"'",
+      
       "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf -y update'",
-      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf install -y openssh-server'",
-      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf install -y openssh-server  tar ncurses nano'",
       "pct exec ${proxmox_lxc.centos.vmid} -- systemctl enable --now sshd",
       "pct exec ${proxmox_lxc.centos.vmid} -- systemctl restart sshd",
+
+      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
+      "pct exec ${proxmox_lxc.centos.vmid} -- . /etc/os-release && echo $ID_LIKE",
+
+      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c \"useradd -m -s /bin/bash -G wheel dami\"",
+      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c \"echo 'dami:${var.proxmox_resource_pass}' | chpasswd\"",
+      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'echo \"dami ALL=(ALL) NOPASSWD:ALL\" > /etc/sudoers.d/dami'",
+      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c \"chmod 0440 /etc/sudoers.d/dami\"",
+
+
     ]
 
     connection {

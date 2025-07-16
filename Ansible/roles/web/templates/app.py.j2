@@ -1,0 +1,35 @@
+from flask import Flask
+import psycopg2
+
+app = Flask(__name__)
+app.config.update(
+    PG_HOST='{{ db_host }}',
+    PG_USER='{{ db_user }}',
+    PG_PASSWORD='{{ db_password }}',
+    PG_DB='{{ db_name }}'
+)
+
+@app.route('/')
+def hello():
+    return "Hello from Flask @ {{ ansible_default_ipv4.address }}!"
+
+@app.route('/db')
+def test_db():
+    try:
+        conn = psycopg2.connect(
+            host=app.config['PG_HOST'],
+            user=app.config['PG_USER'],
+            password=app.config['PG_PASSWORD'],
+            dbname=app.config['PG_DB']
+        )
+        cur = conn.cursor()
+        cur.execute("SELECT version();")
+        version = cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return f"PostgreSQL version: {version}"
+    except Exception as e:
+        return f"DB Error: {e}", 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

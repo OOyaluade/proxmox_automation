@@ -1,0 +1,53 @@
+- name: Create application directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: '0755'
+
+# - name: Deploy minimal Flask app with /db test endpoint
+#   template:
+#     src: templates/app.py.j2
+#     dest: "{{ app_dir }}/app.py"
+#     owner: "{{ ansible_user }}"
+#     mode: '0644'
+
+- name: Clone Flask app from GitHub without prompt
+  git:
+    repo: 'https://github.com/OOyaluade/Website.git'
+    dest: "{{ app_dir }}"
+    version: master
+    force: yes
+  environment:
+    GIT_TERMINAL_PROMPT: "0"
+  become: yes
+  become_user: "{{ ansible_user }}"
+
+
+
+- name: Create .env file with DB config
+  copy:
+    dest: "{{ app_dir }}/.env"
+    content: |
+      DATABASE_URL=postgresql://{{ db_user }}:{{ db_password }}@{{ db_host }}/{{ db_name }}
+      SECRET_KEY={{ flask_secret }}
+    owner: "{{ ansible_user }}"
+    mode: '0600'
+
+
+- name: Create Python virtual environment
+  command: python3 -m venv "{{ app_dir }}/venv"
+  args:
+    creates: "{{ app_dir }}/venv/bin/activate"
+
+- name: Install Flask and requirements into venv
+  pip:
+    virtualenv: "{{ app_dir }}/venv"
+    requirements: "{{ app_dir }}/requirements.txt"
+
+- name: Launch the Flask app in the background
+  shell: "{{ app_dir }}/venv/bin/flask run --host=0.0.0.0 --port=5000 &"
+  args:
+    chdir: "{{ app_dir }}"
+  async: 0
+  poll: 0

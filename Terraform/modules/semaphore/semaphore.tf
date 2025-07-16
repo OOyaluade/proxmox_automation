@@ -51,7 +51,13 @@ resource "null_resource" "PermitRootLogin" {
       "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c 'apt install -y openssh-server'",
       "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c \"sed -i '/^#PermitRootLogin/c\\PermitRootLogin yes' /etc/ssh/sshd_config\"",
       "pct exec ${proxmox_lxc.semaphore.vmid} -- systemctl enable --now ssh",
+
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c \"useradd -m -s /bin/bash -G sudo dami\"",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c \"echo 'dami:${var.proxmox_resource_pass}' | chpasswd\"",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c 'echo \"dami ALL=(ALL) NOPASSWD:ALL\" > /etc/sudoers.d/dami'",
+      "pct exec ${proxmox_lxc.semaphore.vmid} -- bash -c \"chmod 0440 /etc/sudoers.d/dami\"",
       "pct exec ${proxmox_lxc.semaphore.vmid} -- systemctl restart ssh",
+      "pct exec ${proxmox_lxc.semaphore.vmid}  -- bash -c \"mkdir -p /home/dami/.ssh && echo '${var.public_ssh_key}' > /home/dami/.ssh/authorized_keys && chown -R dami:dami /home/dami/.ssh && chmod 700 /home/dami/.ssh && chmod 600 /home/dami/.ssh/authorized_keys\"",
 
     ]
 
