@@ -41,13 +41,14 @@ EOT
 
 
 resource "null_resource" "PermitRootLogin" {
+
   provisioner "remote-exec" {
     inline = [
       # 1. Update packages and install SSH + essentials
       "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'curl \"0.0.0.0\"'",
       
       "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf -y update'",
-      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf install -y openssh-server  tar ncurses nano'",
+      "pct exec ${proxmox_lxc.centos.vmid} -- bash -c 'dnf install -y man epel-release openssh-server which tar ncurses nano'",
       "pct exec ${proxmox_lxc.centos.vmid} -- systemctl enable --now sshd",
       "pct exec ${proxmox_lxc.centos.vmid} -- systemctl restart sshd",
 

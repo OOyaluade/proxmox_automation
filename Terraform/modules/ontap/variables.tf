@@ -11,6 +11,10 @@ variable "host" {
 
 }
 
+variable "pool" {
+  type = string
+  
+}
 
 variable "proxmox_resource_pass" {
   type = string

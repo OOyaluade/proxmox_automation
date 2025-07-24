@@ -29,3 +29,8 @@ variable "ip" {
   type = string
   
 }
+
+variable "storage" {
+  type = string
+  
+}

@@ -12,3 +12,12 @@ variable "vm_state" {
   type = string
 
 }
+variable "pool" {
+  type = string
+  
+}
+
+variable "storage" {
+  type = string
+  
+}

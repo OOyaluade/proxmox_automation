@@ -1,14 +1,23 @@
 resource "proxmox_vm_qemu" "win22" {
   name        = var.name
   target_node = var.target_node
+  vm_state   = var.vm_state
 
-  os_type  = "win10" # "win10" is fine for Server 2016/2019/2022
-  memory   = 8192
-  scsihw   = "virtio-scsi-pci"
-  onboot   = true
-  boot     = "order=ide0"
-  vm_state = "stopped"
+  desc     = "Windows Server 2022"
   tags     = "ComputeServer"
+  onboot   = true
+  pool = var.pool
+
+  boot     = "order=ide1;ide0;ide2"
+  os_type  = "win10"
+
+  scsihw   = "virtio-scsi-pci"
+  memory   = 8192
+
+
+  # BIOS: UEFI (OVMF) for modern OSes
+  bios = "ovmf"
+
 
   disks {
     ide {
@@ -20,7 +29,7 @@ resource "proxmox_vm_qemu" "win22" {
       ide1 {
         disk {
           size    = "100G"
-          storage = "slow-ceph"
+          storage = var.storage
         }
       }
       ide2 {

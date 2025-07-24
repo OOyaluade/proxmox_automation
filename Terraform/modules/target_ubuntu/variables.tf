@@ -17,3 +17,13 @@ variable "ip" {
   type = string
   
 }
+
+variable "pool" {
+  type = string
+  
+}
+
+variable "storage" {
+  type = string
+}
+

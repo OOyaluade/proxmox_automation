@@ -10,6 +10,7 @@ resource "proxmox_vm_qemu" "vyos" {
   onboot      = true
   boot        = "order=ide1;ide0"
   agent       = 0
+  pool = var.pool
   vm_state    = var.vm_state
   tags        = "router"
   serial {
@@ -26,7 +27,7 @@ resource "proxmox_vm_qemu" "vyos" {
       ide1 {
         disk {
           size    = "2G"
-          storage = "LVM-THIN"
+          storage = var.storage
         }
       }
     }

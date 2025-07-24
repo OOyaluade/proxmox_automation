@@ -1,14 +1,24 @@
 resource "proxmox_vm_qemu" "win11" {
-  name        = "win11"
-  target_node = "pve2"
+  name        = var.name
+  target_node = var.target_node
+  pool = var.pool
+  vm_state = var.vm_state
 
-  os_type  = "win11"
-  memory   = 8192 # 8 GB RAM
-  scsihw   = "virtio-scsi-pci"
-  onboot   = true
-  boot     = "order=ide0"
-  vm_state = "stopped"
+  desc     = "Windows 11 VM"
   tags     = "ComputeUserW"
+  onboot   = true
+
+  memory   = 8192
+  scsihw   = "virtio-scsi-pci"
+
+
+  boot     = "order=ide1;ide0;ide2"
+
+
+  os_type = "win10" # Use win10 — no win11 support in Proxmox terraform provider yet
+
+  bios = "ovmf"  # UEFI required for Windows 11
+
 
 
   disks {
@@ -20,8 +30,8 @@ resource "proxmox_vm_qemu" "win11" {
       }
       ide1 {
         disk {
-          size    = "8G"
-          storage = "LVM-THIN"
+          size    = "100G"
+          storage = var.storage
         }
       }
       ide2 {

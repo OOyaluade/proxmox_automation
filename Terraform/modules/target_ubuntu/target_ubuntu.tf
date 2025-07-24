@@ -2,9 +2,10 @@ resource "proxmox_vm_qemu" "Target_Ubuntu" {
   name        = var.name
   target_node = var.target_node # Change to your Proxmox node name
   os_type     = "ubuntu"          # Generic Linux 2.6/3.x/4.x/5.x (Target_Ubuntu runs on Linux)
-  memory      = 2048
+  memory      = 2048*8
   scsihw      = "virtio-scsi-single"
   onboot      = true
+    pool        = var.pool
   boot        = "order=ide1;ide0"
   agent       = 0
   vm_state    = var.vm_state
@@ -20,7 +21,7 @@ resource "proxmox_vm_qemu" "Target_Ubuntu" {
 
   efidisk {
   efitype = "4m"           # 4m is standard for most UEFI setups
-  storage = "LVM-THIN"     # Use your actual storage pool here
+  storage = var.storage     # Use your actual storage pool here
 }
   serial {
     id   = 0
@@ -36,7 +37,7 @@ resource "proxmox_vm_qemu" "Target_Ubuntu" {
       ide1 {
         disk {
           size    = "25000M"
-          storage = "LVM-THIN"
+          storage = var.storage
           emulatessd=true
           # iothread=true
           discard=true
