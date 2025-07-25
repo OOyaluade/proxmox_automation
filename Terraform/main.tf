@@ -111,18 +111,31 @@ module "target_ubuntu0" {
   }
 }
 
+module "GUIUbuntu" {
 
+  name        = "GUIUbuntu"
+  target_node = "pve1"
+  storage     = "slow-ceph"
+  vm_state    = "running"
 
-# module "target_redhat" {
-#   vm_state    = "running"
-#   name        = "RedHatTarget"
-#   target_node = "pve2"
-#   ip = "10.1.10.22"
-#   source = "./modules/target_redhat"
-#   providers = {
-#     proxmox = proxmox
-#   }
-# }
+  pool   = "dev-pool"
+  ip     = "10.1.10.20"
+  source = "./modules/target_ubuntu"
+  providers = {
+    proxmox = proxmox
+  }
+}
+
+module "target_redhat" {
+  vm_state    = "running"
+  name        = "RedHatTarget"
+  target_node = "pve2"
+  ip = "10.1.10.22"
+  source = "./modules/target_redhat"
+  providers = {
+    proxmox = proxmox
+  }
+}
 
 # module "target_susu" {
 #   vm_state    = "running"
@@ -237,21 +250,21 @@ module "prom" {
 }
 
 
-module "centos" {
+# module "centos" {
 
-  public_ssh_key = var.public_ssh_key
-  host           = "10.1.10.32"
-  ip             = var.centos_ip
-  start          = true
-  target_node    = "pve2"
-  name           = "CentOS11"
-  unprivileged   = true
-  source         = "./modules/centos"
-  providers = {
-    proxmox = proxmox
-  }
-  proxmox_resource_pass = var.proxmox_resource_pass
-}
+#   public_ssh_key = var.public_ssh_key
+#   host           = "10.1.10.32"
+#   ip             = var.centos_ip
+#   start          = true
+#   target_node    = "pve2"
+#   name           = "CentOS11"
+#   unprivileged   = true
+#   source         = "./modules/centos"
+#   providers = {
+#     proxmox = proxmox
+#   }
+#   proxmox_resource_pass = var.proxmox_resource_pass
+# }
 
 
 # module "centtwo" {
